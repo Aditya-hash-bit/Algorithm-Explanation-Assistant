@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algorithm Explanation Assistant</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>AlgoExplain AI</h2>
+            <span class="badge">AIML Mini Project</span>
+        </div>
+
+        <button id="new-chat-btn" class="btn btn-primary btn-full">
+            <i class="ph ph-plus"></i> New Chat
+        </button>
+
+        <button id="clear-history-btn" class="btn btn-secondary btn-full">
+            <i class="ph ph-trash"></i> Clear History
+        </button>
+
+        <div class="sidebar-section">
+            <h3>Try Examples</h3>
+            <div class="example-chips">
+                <button class="chip" data-query="Binary Search">Binary Search</button>
+                <button class="chip" data-query="Merge Sort">Merge Sort</button>
+                <button class="chip" data-query="BFS Algorithm">BFS</button>
+                <button class="chip" data-query="Dijkstra's Algorithm">Dijkstra</button>
+                <button class="chip" data-query="Quick Sort">Quick Sort</button>
+            </div>
+        </div>
+
+        <!-- 🔥 FIXED: RECENT CHATS -->
+        <div class="sidebar-section">
+    <h3>Recent Chats</h3>
+
+    <ul>
+{% for chat_id, messages in chats.items() %}
+    <li onclick="loadChat('{{ chat_id }}')" style="cursor:pointer;">
+        {% if messages|length > 0 %}
+            {{ messages[0].query }}
+        {% else %}
+            New Chat
+        {% endif %}
+    </li>
+{% endfor %}
+</ul>
+</div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+        <div id="chat-container" class="chat-container">
+
+            <!-- 🔥 FIXED: SHOW LATEST CHAT -->
+            {% if chats %}
+                {% set last_chat = chats|list|last %}
+                {% set messages = chats[last_chat] %}
+
+                {% for item in messages %}
+                    <div class="message user-message">
+                        <div class="message-content">
+                            {{ item.query }}
+                        </div>
+                    </div>
+
+                    <div class="message ai-message">
+                        <div class="message-avatar"><i class="ph ph-robot"></i></div>
+                        <div class="message-content markdown-body">
+                            <div class="history-data" style="display:none;" data-raw="{{ item.response }}"></div>
+                            <div class="rendered-response"></div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+            {% else %}
+
+                <div class="welcome-screen" id="welcome-screen">
+                    <i class="ph ph-brain"></i>
+                    <h1>How can I help you understand algorithms today?</h1>
+                    <p>Ask any algorithm or paste pseudocode.</p>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- INPUT -->
+        <div class="input-area">
+            <div class="input-box-wrapper">
+                <textarea id="user-input" placeholder="Ask about an algorithm..." rows="1"></textarea>
+                <button id="send-btn">
+                    <i class="ph-fill ph-paper-plane-right"></i>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>
